@@ -52,7 +52,7 @@ Complex Persistence + Discrete Morse Graph Reconstruction Module
 
 ## DiMo3d Functions
 
-###DiMo3d.split_domain(input_dir, output_dir, x_len, y_len, z_len, overlap=5i)
+### DiMo3d.split_domain(input_dir, output_dir, x_len, y_len, z_len, overlap=5i)
 
 #### Description
 Divide the input domain into overlapping sub-rectangular prisms.
@@ -78,3 +78,26 @@ Returns nx, ny, nz, and overlap - the x/y/z dimensions of the image stack and th
     >morse_dir = “results/image_stack_morse/”
     >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
 
+![DiMo3d.split_domain](images/split-domain.png)
+
+### DiMo3d.split_domain(input_dir, output_dir, x_len, y_len, z_len, overlap=5i)
+
+#### Description
+Write input file for dipha program used to compute persistence for each subregion
+
+#### Input
+- input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should match output_dir of a previous DiMo3d.split_domain call.
+
+#### Output
+
+Input file for DIPHA program.  A file is written for each subregion.
+
+#### Example
+
+    >image_stack_dir = “data/image_stack/”
+    >morse_dir = “results/image_stack_morse/”
+    >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
+    >dm.write_dipha_persistence_input(morse_dir)
+
+
+![DiMo3d.write_dipha_persistence_input](images/write-dipha-persistence-input.png)
