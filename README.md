@@ -101,3 +101,74 @@ Input file for DIPHA program.  A file is written for each subregion.
 
 
 ![DiMo3d.write_dipha_persistence_input](images/write-dipha-persistence-input.png)
+
+### DiMo3d.compute_dipha_persistence(input_path, threads=1)
+
+#### Description
+Compute persistence using DIPHA program for each subregion
+
+#### Input
+- input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.write_dipha_persistence_input call
+- threads - number of threads used to run in parallel
+
+#### Output
+
+Persistence Diagram for each subregion.  A file is written for each subregion.
+
+#### Example
+
+    >image_stack_dir = “data/image_stack/”
+    >morse_dir = “results/image_stack_morse/”
+    >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
+    >dm.write_dipha_persistence_input(morse_dir)
+    >dm.compute_dipha_persistence(morse_dir)
+
+
+![DiMo3d.compute_dipha_persistence](images/compute-dipha-persistence.png)
+
+### DiMo3d.compute_dipha_persistence(input_path, threads=1)
+
+#### Description
+Convert the format of the persistence diagram outputted by dipha for each subregion to be used for graph reconstruction
+
+#### Input
+- input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.compute_dipha_persistence call
+- threads - number of threads used to run in parallel
+
+#### Output
+
+Persistence Diagram for each subregion in format meant for discrete Morse graph reconstruction program.  A file is written for each subregion.
+
+#### Example
+
+    >image_stack_dir = “data/image_stack/”
+    >morse_dir = “results/image_stack_morse/”
+    >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
+    >dm.write_dipha_persistence_input(morse_dir)
+    >dm.compute_dipha_persistence(morse_dir)
+    >dm.convert_persistence_diagram(morse_dir)
+
+![DiMo3d.convert_persistence_diagram](images/convert-persistence-diagram.png)
+
+### DiMo3d.write_vertex_file(input_path, threads=1)
+
+#### Description
+Write vertex files for each subregion to be used for graph reconstruction
+
+#### Input
+- input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
+- threads - number of threads used to run in parallel
+
+#### Output
+
+Text file containing vertex coordinates for each subregion in format meant for discrete Morse graph reconstruction program.  A file is written for each subregion.
+
+#### Example
+
+    >image_stack_dir = “data/image_stack/”
+    >morse_dir = “results/image_stack_morse/”
+    >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
+    >dm.write_vertex_files(morse_dir)
+
+![DiMo3d.write_vertex_files](images/write-vertex-file.png)
+
