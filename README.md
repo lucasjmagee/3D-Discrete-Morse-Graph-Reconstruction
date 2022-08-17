@@ -94,6 +94,8 @@ Input file for DIPHA program.  A file is written for each subregion.
 
 #### Example
 
+    >import DiMo3d as dm
+
     >image_stack_dir = “data/image_stack/”
     >morse_dir = “results/image_stack_morse/”
     >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
@@ -117,12 +119,13 @@ Persistence Diagram for each subregion.  A file is written for each subregion.
 
 #### Example
 
+    >import DiMo3d as dm
+
     >image_stack_dir = “data/image_stack/”
     >morse_dir = “results/image_stack_morse/”
     >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
     >dm.write_dipha_persistence_input(morse_dir)
     >dm.compute_dipha_persistence(morse_dir)
-
 
 ![DiMo3d.compute_dipha_persistence](images/compute-dipha-persistence.png)
 
@@ -140,6 +143,8 @@ Convert the format of the persistence diagram outputted by dipha for each subreg
 Persistence Diagram for each subregion in format meant for discrete Morse graph reconstruction program.  A file is written for each subregion.
 
 #### Example
+
+    >import DiMo3d as dm
 
     >image_stack_dir = “data/image_stack/”
     >morse_dir = “results/image_stack_morse/”
@@ -165,6 +170,8 @@ Text file containing vertex coordinates for each subregion in format meant for d
 
 #### Example
 
+    >import DiMo3d as dm
+
     >image_stack_dir = “data/image_stack/”
     >morse_dir = “results/image_stack_morse/”
     >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
@@ -172,3 +179,148 @@ Text file containing vertex coordinates for each subregion in format meant for d
 
 ![DiMo3d.write_vertex_files](images/write-vertex-file.png)
 
+### DiMo3d.graph_reconstruction(input_path, persistence_threshold, threads=1)
+
+#### Description
+Run discrete Morse graph reconstruction on each subregion within input_path directory.
+
+#### Input
+- input_path - input path to directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
+- persistence_threshold - value of persistence threshold parameter used by discrete Morse graph reconstruction algorithm.
+- threads - number of threads used to run in parallel
+
+#### Output
+
+Vertex and edge file representing the discrete Morse graph reconstruction output.  The graph files are stored in a directory for the persistence threshold for each threshold
+
+#### Example
+
+    >import DiMo3d as dm
+
+    >image_stack_dir = “data/image_stack/”
+    >morse_dir = “results/image_stack_morse/”
+    >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
+    >dm.write_dipha_persistence_input(morse_dir)
+    >dm.compute_dipha_persistence(morse_dir)
+    >dm.convert_persistence_diagram(morse_dir)
+    >dm.write_vertex_file(morse_dir)
+    >dm.graph_reconstruction(morse_dir, 32)
+
+![DiMo3d.run_morse](images/morse.png)
+
+### DiMo3d.write_vtp_graph(vert_filename, edge_filename, output_filename)
+
+#### Description
+Convert .txt format graph (vert file and edge file) to .vtp format
+
+#### Input
+- vert_filename - vertex coordinates of graph
+- edge_filename - edges of graph
+- output_filename - vtp formatted graph file
+
+#### Output
+
+A single file (output_filename) written in .vtp format containing the input graph
+
+#### Example
+
+    >import DiMo3d as dm
+
+    >vert_filename = “/path/to/dimo_vert.txt”
+    >edge_filename = “/path/to/dimo_edge.txt”
+    >output_filename = "/path/to/graph.vtp"
+    >dm.write_vtp_graph(vert_filename, edge_filename, output_filename)
+
+![DiMo3d.write_vtp_graph](images/write-vtp-graph.png)
+
+## Separate Programs
+
+### Dipha Persistence Program (code/dipha-3d/build/dipha)
+
+#### Description
+
+Compute persistence diagram of 3D image stack.  The program is a modified version of the code found at (https://github.com/DIPHA/dipha).
+
+#### Python Function
+
+DiMo3d.compute_dipha_persistence
+
+#### Input
+- input_filename - path to DIPHA input file
+- output_filename - filename for traditional DIPHA program persistence diagram
+- edge_filename - filename for edge information - vertices, edge type (negative or positive), and persistence value
+
+#### Output:
+
+Binary file (edge_filename) containing persistence information for all edges
+
+![DIPHA](images/dipha-3d.png)
+
+### Discrete Morse Graph Reconstruction Program (./DiMo3d/code/dipha-output/a.out)
+
+#### Description
+
+Executes discrete Morse graph reconstruction algorithm
+
+#### Python Function
+
+DiMo3d.graph_reconstruction
+
+#### Input
+
+- vert_filename - file contain verts in domain
+- dipha_edge_filename - .txt format of edge persistence information
+- persistence threshold - persistence threshold for graph reconstruction algorithm
+- output_dir - directory where output graph will be written
+
+#### Output
+
+Graph (dimo_vert.txt and dimo_edge.txt) written to output_dir
+
+![DM Graph Reconstruction](images/morse-program.png)
+
+## MATLAB Scripts
+
+### parallel_dipha_input.m
+
+#### Description
+
+Creates DIPHA input file for all subregions
+
+#### Python Function
+		
+DiMo3d.write_dipha_persistence_input
+
+#### Input
+input_path - input path to directory containing subregions for which we will need to compute persistence on.
+valid_filename - filename containing list of valid subregions.  This is generated within the python pipeline
+
+#### Output
+
+DIPHA input file for each subregion.  A subregion’s file is written to its results directory
+
+![Parallel Dipha Input](images/parallel-dipha-input.png)
+
+
+### load_persistence_diagram.m
+
+#### Description
+
+Converts DIPHA persistence diagram to .txt format for use by Discrete Morse Graph Reconstruction program
+
+#### Python Function
+		
+DiMo3d.convert_persistence_diagram
+
+#### Input
+- input_filename - Persistence diagram output directly from DIPHA program (.bin format)
+- output_filename - filename for .txt format of persistence diagram
+
+#### Output
+
+Persistence Diagram in .txt format for each subregion
+
+![Load Persistence Diagram](images/load-persistence-diagram.png)
+
+
+## Example Use of Pipeline
