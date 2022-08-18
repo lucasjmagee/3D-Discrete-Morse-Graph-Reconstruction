@@ -324,3 +324,19 @@ Persistence Diagram in .txt format for each subregion
 
 
 ## Example Use of Pipeline
+
+    >import DiMo3d as dm
+
+    >persistence_threshold = 256
+    >merge_persistence_threshold = 256
+    >image_stack_dir = “data/image_stack/”
+    >morse_dir = “results/image_stack_morse/”
+    >merge_dir = “results/image_stack_merge/”
+    >nx, ny, nz, overlap = dm.split_domain(image_stack_dir, morse_dir, 128, 128, 128, 16)
+    >dm.write_dipha_persistence_input(morse_dir)
+    >dm.compute_dipha_persistence(morse_dir)
+    >dm.convert_persistence_diagram(morse_dir)
+    >dm.write_vertex_file(morse_dir)
+    >dm.graph_reconstruction(morse_dir, persistence_threshold)
+    >dm.merge(morse_dir, merge_dir, persistence_threshold, merge_persistence_threshold, nx, ny, nz, 128, 128, 128, overlap, 1)
+
