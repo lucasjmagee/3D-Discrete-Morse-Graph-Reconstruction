@@ -426,3 +426,4 @@ Persistence Diagram in .txt format for each subregion
     >dm.graph_reconstruction(morse_dir, persistence_threshold)
     >dm.merge(morse_dir, merge_dir, persistence_threshold, merge_persistence_threshold, nx, ny, nz, 128, 128, 128, overlap, 1)
 
+![Pipeline](images/pipeline.png)
