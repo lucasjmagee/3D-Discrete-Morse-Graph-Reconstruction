@@ -208,6 +208,46 @@ Vertex and edge file representing the discrete Morse graph reconstruction output
 
 ![DiMo3d.run_morse](images/morse.png)
 
+
+### DiMo3d.merge(input_path, merge_dir, persistence_threshold, merge_threshold, nx, ny, nz, x_len, y_len, z_len, overlap, threads=1)
+
+#### Description
+Perform DM-based hierarchical merging of graphs of subregions. Performed iteratively until a single graph for the entire domain remains.
+
+#### Input
+- input_path - input path to directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
+- merge_dir - directory for merge results will be written to 
+- persistence_threshold - value of persistence threshold parameter used by discrete Morse graph reconstruction algorithm.
+- merge_threshold - persistence threshold used during DM computation for merges
+- nx - size of x axis of original image stack
+- ny - size of y axis of original image stack
+- nz - size of z axis of original image stack
+- x_len - base size of x axis for subregions
+- y_len - base size of y axis for subregions
+- z_len - base size of z axis for subregions
+- overlap - size of overlap on axes between regions
+- threads - number of threads used to run in parallel
+
+#### Output
+
+Vertex and edge files representing the discrete Morse graph reconstruction output.
+
+#### Example
+
+    >import DiMo3d as dm
+
+    >image_stack_dir = “data/image_stack/”
+    >morse_dir = “results/image_stack_morse/”
+    >dm.split_domain(image_stack_dir, morse_dir, 64, 64, 64, 5)
+    >dm.write_dipha_persistence_input(morse_dir)
+    >dm.compute_dipha_persistence(morse_dir)
+    >dm.convert_persistence_diagram(morse_dir)
+    >dm.write_vertex_file(morse_dir)
+    >dm.graph_reconstruction(morse_dir, 32)
+    >dm.merge(morse_dir, merge_dir, 32, 32, 256, 256, 256, 64, 64, 64, 5, 1)
+
+![DiMo3d.merge](images/python-merge.png)
+
 ### DiMo3d.write_vtp_graph(vert_filename, edge_filename, output_filename)
 
 #### Description
