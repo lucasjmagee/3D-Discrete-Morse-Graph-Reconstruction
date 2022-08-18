@@ -670,6 +670,7 @@ void Simplicial2Complex::retrieve_1manifold_simp(){
     cri_e_vec.clear();
     cri_e_vec.insert(cri_e_vec.end(),ve_e_gt_sigma.begin(),ve_e_gt_sigma.end());
     cri_e_vec.insert(cri_e_vec.end(),et_e_gt_sigma.begin(),et_e_gt_sigma.end());
+    cri_e_vec.insert(cri_e_vec.end(),unpaired.begin(),unpaired.end());
 
     cout<<"cri_e: "<<cri_e_vec.size()<<endl;
     int n_know_min=0;
