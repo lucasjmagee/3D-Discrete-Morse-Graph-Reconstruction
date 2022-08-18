@@ -273,6 +273,34 @@ A single file (output_filename) written in .vtp format containing the input grap
 
 ![DiMo3d.write_vtp_graph](images/write-vtp-graph.png)
 
+### DiMo3c.extract_subregion(input_dir, output_dir, x_center, y_center, z_center, x_len, y_len, z_len, threads=1):
+
+#### Description
+Extract a subregion from full brain fMOST image stack
+
+#### Input
+- input_dir - input image stack of large (presumably full) domain
+- output_dir - directory subregion image stack will be stored
+- x_center - subregion center's x coordinate (in microns!)
+- y_center - subregion center's y coordinate (in microns!)
+- z_center - subregion center's z coordinate (in microns!)
+- x_len - length of x-axis of subregion (in pixels!)
+- y_len - length of y-axis of subregion (in pixels!)
+- z_len - length of z-axis of subregion (in pixels!)
+- threads - images handled at a time
+
+#### Output
+
+Image stack of a subregion of an fMOST brain
+
+#### Example
+
+    >import DiMo3d as dm
+
+    >dm.extract_subregion("data/image_stack/", "results/smaller_image_stack/", 128, 128, 128, 64, 64, 64)
+
+![DiMo3d.extract_subregion](images/subregion.png)
+
 ## Separate Programs
 
 ### Dipha Persistence Program (code/dipha-3d/build/dipha)
