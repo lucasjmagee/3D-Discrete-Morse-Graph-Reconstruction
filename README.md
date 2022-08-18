@@ -319,6 +319,52 @@ Graph (dimo_vert.txt and dimo_edge.txt) written to output_dir
 
 ![DM Graph Reconstruction](images/morse-program.png)
 
+### Build Merge Complex (./DiMo3d/code/merge/a.out)
+
+#### Description
+
+Builds a single complex out of multiple subregion's graphs to output that will be simplified with the DM graph reconstruction algorithm
+
+#### Python Function
+
+DiMo3d.merge
+
+#### Input
+
+- input_dir - directory with results we will need to merge
+- output_dir - directory where merge results will be saved
+- config_filename - file containing information of regions we will merge
+- persistence_threshold - threshold of graphs we wish to merge - this is NOT the persistence threshold used for simplifying DM graph of the output complex
+
+#### Output
+
+A single complex built from up to 8 individual subregions DM graph reconstructions.  Will perform another round of DM on this output to get a single graph reconstruction for all subregions
+
+![Build Merge Complex](images/merge-program.png)
+
+### Simplicial Complex Morse Program (./DiMo3d/code/spt_cpp/spt_cpp)
+
+#### Description
+
+Run DM Graph reconstruction on a simplicial complex with density function defined on its vertices.  The program is a modified version of the code found at (https://github.com/wangjiayuan007/graph_recon_DM).
+
+#### Python Function
+
+DiMo3d.merge
+
+#### Input
+
+- input_filename - simplicial complex file (.bin) 
+- output_dir - directory where morse graph will be written
+- persistence_threshold - threshold used by DM graph reconstruction algorithm
+- dimension - dimension simplicial complex lies within (this should always be 3 for the sake of this pipeline)
+
+#### Output
+
+Graph in .txt format (overlap_dimo_vert.txt and overlap_dimo_edge.txt)
+
+![Complex DM](images/complex-dm.png)
+
 ## MATLAB Scripts
 
 ### parallel_dipha_input.m
