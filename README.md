@@ -330,7 +330,7 @@ Image stack of a subregion of an fMOST brain
 
 #### Description
 
-Compute persistence diagram of 3D image stack.  The program is a modified version of the code found at (https://github.com/DIPHA/dipha).
+The first step of the DM graph reconstruction algorithm is to compute persistence on the so called lower star filtration of the input triangulation with respect to the density function.  This package uses the state of the art DIPHA persistence program for this step. The program is a modified version of the code found at (https://github.com/DIPHA/dipha) that is meant to explicitly take 3D data and output all of the persistence information needed for the DM graph reconstruction algorithm.
 
 #### Python Function
 
@@ -351,7 +351,7 @@ Binary file (edge_filename) containing persistence information for all edges
 
 #### Description
 
-Executes discrete Morse graph reconstruction algorithm
+After computing persistence of the edges in the domain, the DM algorithm uses the persistence information to build an appropriate spanning forest and extracts the stable 1-manifolds (mountain ridges) on top of the spanning forest.  The program takes a list of vertices in the domain and a file containing the persistence information computed by DIPHA.
 
 #### Python Function
 
@@ -374,7 +374,7 @@ Graph (dimo_vert.txt and dimo_edge.txt) written to output_dir
 
 #### Description
 
-Builds a single complex out of multiple subregion's graphs to output that will be simplified with the DM graph reconstruction algorithm
+Builds a single complex out of multiple subregion's graphs to output that will be simplified with the DM graph reconstruction algorithm.  After computing graph reconstruction of each subregion - the first step of the merging process is to build a complex containing a triangulation of overlap regions that contain graphs in order to connect falsely broken branches running between subregions.  This program build a complex for a single merge.
 
 #### Python Function
 
@@ -397,7 +397,7 @@ A single complex built from up to 8 individual subregions DM graph reconstructio
 
 #### Description
 
-Run DM Graph reconstruction on a simplicial complex with density function defined on its vertices.  The program is a modified version of the code found at (https://github.com/wangjiayuan007/graph_recon_DM).
+Run DM Graph reconstruction on a simplicial complex with density function defined on its vertices.  After building a triangulation of the overlap region, another round of DM on the overlap regions is required to extract the true connection between subregions - without this connections will be entire triangulations which is not a true representation of the underlying neuronal branches. The program is a modified version of the code found at (https://github.com/wangjiayuan007/graph_recon_DM) meant to include what are known as unpaired edges and their stable 1-manifolds.  Unpaired edges capture loops that are in the input complex and cannot be removed with persistence thresholding.
 
 #### Python Function
 
@@ -422,7 +422,7 @@ Graph in .txt format (overlap_dimo_vert.txt and overlap_dimo_edge.txt)
 
 #### Description
 
-Creates DIPHA input file for all subregions
+Creates DIPHA input file for all subregions.  The DIPHA program takes a specifically formatted input file.  The authors of DIPHA included a script for generating such file for imaging data.  This matlab function is a modified version meant to build write the input file needed for every subregion.
 
 #### Python Function
 		
@@ -443,7 +443,7 @@ DIPHA input file for each subregion.  A subregion’s file is written to its res
 
 #### Description
 
-Converts DIPHA persistence diagram to .txt format for use by Discrete Morse Graph Reconstruction program
+Converts DIPHA persistence diagram to .txt format for use by Discrete Morse Graph Reconstruction program.  The DIPHA program includes a matlab function to read in binary output file of program to visualize persistence diagram.  This matlab function is a modified version meant to convert the dipha output of a subregion into a usable format for the DM-graph reconstruction program.
 
 #### Python Function
 		
