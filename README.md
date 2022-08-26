@@ -29,11 +29,17 @@ Copy DiMo3d to your current working directory, then ensure all system requiremen
 - cmake 3.16.3 (or newer)
 
 ### Required Python Libraries
+
 - cv2 (https://pypi.org/project/opencv-python/)
+
     >pip install opencv-python
+
 - PIL (https://pypi.org/project/Pillow/)
+
     >pip install pillow
+
 - vtk (https://pypi.org/project/vtk/)
+
     >pip install vtk
 
 ### Compiling Code
