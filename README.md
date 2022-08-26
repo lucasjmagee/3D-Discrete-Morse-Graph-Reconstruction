@@ -1,7 +1,6 @@
 # 3D Discrete Morse Graph Reconstruction Python Package
 
-DiMo3d is a python package meant for executing the discrete Morse graph reconstruction algorithm on 3D imaging data. - designed with full mouse brain imaging data in mind.  The package includes functions which allow users to divide the domain into overlapping subregions, compute persistence diagrams of each subregion, generate a discrete Morse graph reconstruction for each subregion, and merge the graphs together into a final graph reconstruction of the full domain.
-
+* [Introduction](#introduction)
 * [Installation Intructions](#installation-instructions)
   * [System Requirements](#system-requirements)
   * [Required Python Libraries](#required-python-libraries)
@@ -11,6 +10,14 @@ DiMo3d is a python package meant for executing the discrete Morse graph reconstr
 * [Separate Programs](#separate-programs)
 * [MATLAB Scripts](#matlab-scripts)
 * [Example Use of Pipeline](#example-use-of-pipeline)  
+
+## Introduction
+
+DiMo3d is a python package (with underlying matlab functions and c++ libraries) that can be used to compute DM graph reconstructions for 3D imaging data.  There are functions for dividing an image stack into subregions, computing persistence diagram for each subregion (required for computing DM graph reconstruction, but could also be of independent interest), computing DM graph reconstruction for each subregion, merging graphs of subregions into a single graph for the full image_stack, and writing graphs to .vtp format to be visualize by applications such as paraview (https://www.paraview.org/).
+
+DM graph reconstruction is a methodology used to extract true underlying graph structure behind noisy input data.  The input for the algorithm is a density function defined on a triangulation, and the output graph is the mountain ridges of the input density function.  For mouse brain imaging data, the density function used is simply the voxel values. The mountain ridges of the density function do an excellent job of captures the neuronal branches in the image stack.  However, the persistence computation is a computational bottleneck, and cannot be performed on large datasets.  By dividing input images into overlapping subregions, the pipeline is able to efficiently extract accurate graphs for each subregion, and merge these graphs into a single reconstruction for the full domain.
+
+This package was designed to be an intergral part of the pipeline to extract single neuron reconstructions from full mouse brain imaging data.  While the pipeline will output a graph capture all neuronal branches, further postprocess of the graph will be required to obtain individual neuron reconstructions.  The package, while designed with mouse imaging data specifically in mind, can be used on any 3D imaging dataset.  Optimal parameters will vary by dataset and intended use case of the graphs.
 
 ## Installation Instructions
 ### System Requirements
