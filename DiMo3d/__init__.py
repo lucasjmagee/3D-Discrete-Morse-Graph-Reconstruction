@@ -524,7 +524,7 @@ def __single_merge(raw_dir, merge_dir, first_dir, persistence_threshold, merge_t
         for e in local_edges:
             final_edges.append([local_vert_dict[e[0]], local_vert_dict[e[1]]])
 
-        v_shift += local_count
+        v_shift += local_count - dup
     # print(match,'/',total)
 
     with open(final_vert_filename, 'w') as vert_file:
