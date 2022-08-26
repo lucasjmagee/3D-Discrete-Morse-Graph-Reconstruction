@@ -67,7 +67,7 @@ Complex Persistence + Discrete Morse Graph Reconstruction Module
 ### DiMo3d.split_domain(input_dir, output_dir, x_len, y_len, z_len, overlap=5)
 
 #### Description
-Divide the input domain into overlapping sub-rectangular prisms.
+Given an input image stack, divide the image stack into overlapping subregions.  The purpose of this is to have subregions of a size such that the DM graph reconstruction algorithm is efficient to run on each individual region.  It is recommended to take as large of subregions as possible such that the running time for DM graph reconstruction is still acceptable to the user.  Overlap of subregions allows for the merging of the graphs of subregions into a single graph for the full domain. It is recommended to take as small of an overlap as possible such that all individual neuron branches that cross subregions are correctly captured after merging graphs.
 
 #### Input
 - Input_dir - path to input image stack
@@ -92,10 +92,10 @@ Returns nx, ny, nz, and overlap - the x/y/z dimensions of the image stack and th
 
 ![DiMo3d.split_domain](images/split-domain.png)
 
-### DiMo3d.split_domain(input_dir, output_dir, x_len, y_len, z_len, overlap=5i)
+### DiMo3d.write_dipha_persistence_input(input_path)
 
 #### Description
-Write input file for dipha program used to compute persistence for each subregion
+The first step of compute DM graph reconstruction to compute the persistence diagrams of each subregion.  This packages uses a modified version of the DIPHA software for this computation.  DIPHA takes specifically formatted input file - this function creates the required input file for each subregion in the domain.
 
 #### Input
 - input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should match output_dir of a previous DiMo3d.split_domain call.
@@ -119,7 +119,8 @@ Input file for DIPHA program.  A file is written for each subregion.
 ### DiMo3d.compute_dipha_persistence(input_path, threads=1)
 
 #### Description
-Compute persistence using DIPHA program for each subregion
+
+The first step of compute DM graph reconstruction to compute the persistence diagrams of each subregion.  This packages uses a modified version of the DIPHA software for this computation.  DIPHA takes specifically formatted input file.  After generating the input files for the dipha program for each subregion (DiMo3d.write_dipha_persistence_input) this function will call the DIPHA program to compute the persistence diagram for each subregion.
 
 #### Input
 - input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.write_dipha_persistence_input call
@@ -141,10 +142,10 @@ Persistence Diagram for each subregion.  A file is written for each subregion.
 
 ![DiMo3d.compute_dipha_persistence](images/compute-dipha-persistence.png)
 
-### DiMo3d.compute_dipha_persistence(input_path, threads=1)
+### DiMo3d.convert_persistence_diagram(input_path, threads=1)
 
 #### Description
-Convert the format of the persistence diagram outputted by dipha for each subregion to be used for graph reconstruction
+The DM graph reconstruction program takes a specifically formatted file of persistence values of edges in domain as input.  The DIPHA program outputs this information but in an incompatiable format.  This function will convert the DIPHA output containing the persistence information needed to perform DM graph reconstruction for each subregion.
 
 #### Input
 - input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.compute_dipha_persistence call
