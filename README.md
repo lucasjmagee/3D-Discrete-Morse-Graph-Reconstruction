@@ -171,7 +171,7 @@ Persistence Diagram for each subregion in format meant for discrete Morse graph 
 ### DiMo3d.write_vertex_file(input_path, threads=1)
 
 #### Description
-Write vertex files for each subregion to be used for graph reconstruction
+The DM graph reconstruction program takes a file as input that contains the coordinates and density (voxel) function values.  This function will convert the image stack of each subregion into the .txt format required by the DM graph reconstruction algorithm.
 
 #### Input
 - input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
@@ -195,7 +195,7 @@ Text file containing vertex coordinates for each subregion in format meant for d
 ### DiMo3d.graph_reconstruction(input_path, persistence_threshold, threads=1)
 
 #### Description
-Run discrete Morse graph reconstruction on each subregion within input_path directory.
+Run discrete Morse graph reconstruction on each subregion within input_path directory.  The persistence threshold is the only parameter required - a higher threshold will results in a greater simplification of the output graph (fewer edges).  Outputs are stored in a folder named after the persistence threshold - so a user can see results at a specific threshold then rerun with an appropriately adjusted threshold.
 
 #### Input
 - input_path - input path to directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
@@ -225,7 +225,8 @@ Vertex and edge file representing the discrete Morse graph reconstruction output
 ### DiMo3d.merge(input_path, merge_dir, persistence_threshold, merge_threshold, nx, ny, nz, x_len, y_len, z_len, overlap, threads=1)
 
 #### Description
-Perform DM-based hierarchical merging of graphs of subregions. Performed iteratively until a single graph for the entire domain remains.
+
+Perform DM-based hierarchical merging of graphs of subregions. After getting graph reconstructions for each subregion, a user can merge the graphs together in order to obtain a single graph for the entire domain. Merging is required because branches that cut across different subregions might not already be connected by taking the union of the two graphs.  First a triangulation is built in the overlap regions, which connects branches meant to be merged. Density estimation is used assign density values to each vertex in the triangulation. Then DM graph reconstruction is performed to extract the true connection path between overlap regions.  These triangulations are significantly smaller than that of the full domain, making the merging significantly more efficient than running DM graph reconstruction on full domain.
 
 #### Input
 - input_path - input path to directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
@@ -264,7 +265,7 @@ Vertex and edge files representing the discrete Morse graph reconstruction outpu
 ### DiMo3d.write_vtp_graph(vert_filename, edge_filename, output_filename)
 
 #### Description
-Convert .txt format graph (vert file and edge file) to .vtp format
+Convert .txt format graph (vert file and edge file) to .vtp format.  Through the package, DM graphs are outputted as two .txt files - a text file for vertices and a text file for edges.  Different formatting is required to visualize graphs in 3rd party software.  This function will output a .vtp file for the specified input graph.  .vtp can be viewed in softwares such as Paraview.
 
 #### Input
 - vert_filename - vertex coordinates of graph
@@ -289,14 +290,14 @@ A single file (output_filename) written in .vtp format containing the input grap
 ### DiMo3c.extract_subregion(input_dir, output_dir, x_center, y_center, z_center, x_len, y_len, z_len, threads=1):
 
 #### Description
-Extract a subregion from full brain fMOST image stack
+Extract a subregion from full brain fMOST image stack.  This function is meant for extracting a subregion off of an fMOST image stack. fMOST brain imaging data is huge and can take a very long time to process.  Taking a smaller - but still sizable subregion is a great way to see DM graphs for meaningful portions of the brain.
 
 #### Input
 - input_dir - input image stack of large (presumably full) domain
 - output_dir - directory subregion image stack will be stored
-- x_center - subregion center's x coordinate (in microns!)
-- y_center - subregion center's y coordinate (in microns!)
-- z_center - subregion center's z coordinate (in microns!)
+- x_center - subregion center's x coordinate (in microns! - take from ground truth .swc file)
+- y_center - subregion center's y coordinate (in microns! - take from ground truth .swc file)
+- z_center - subregion center's z coordinate (in microns! - take from ground truth .swc file)
 - x_len - length of x-axis of subregion (in pixels!)
 - y_len - length of y-axis of subregion (in pixels!)
 - z_len - length of z-axis of subregion (in pixels!)
