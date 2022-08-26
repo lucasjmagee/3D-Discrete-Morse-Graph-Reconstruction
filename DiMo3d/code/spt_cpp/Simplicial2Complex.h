@@ -867,6 +867,31 @@ void Simplicial2Complex::convert_output(){
         output_edge.push_back(new_e);
     }
 
+    //cri_edge unpaired
+    for(auto it=unpaired.begin();it!=unpaired.end();it++){
+        int e_ind = *it;
+        Edge *cri_e = atE(e_ind);
+        int *e_vert = cri_e->getVertices();
+        //2ADJ: e_vert[0] e_vert[1]
+        int out_vind[2] = {-1,-1};//for edge
+        for(int j=0;j<2;j++){
+            auto map_it = in_out_ind.find(e_vert[j]);
+            if(map_it!=in_out_ind.end()){
+                //exitst vertex
+                out_vind[j]=map_it->second;
+            }
+            else{
+                //write vertex
+                in_out_ind[e_vert[j]]=vert_count;
+                out_vind[j]=vert_count;
+                output_vert.push_back(e_vert[j]);
+                vert_count++;
+            }
+        }
+        vector<int> new_e{out_vind[0],out_vind[1],2};
+        output_edge.push_back(new_e);
+    }
+
 //    //cri_edge
 //    for(auto it=cri_e_vec.begin();it!=cri_e_vec.end();it++){
 //        int e_ind = *it;
