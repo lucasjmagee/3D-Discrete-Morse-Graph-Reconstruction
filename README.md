@@ -39,10 +39,12 @@ Discrete Morse Graph Reconstruction Module
     > g++ ComputeGraphReconstruction.cpp
     
 Merge Complex Module
+    
     > cd DiMo3d/code/merge/
     > g++ combine.cpp
 
 Complex Persistence + Discrete Morse Graph Reconstruction Module
+    
     > cd DiMo3d/code/spt_cpp/
     > g++ DiMoSC.cpp -I./phat/include -std=c++11 -o spt_cpp
     
