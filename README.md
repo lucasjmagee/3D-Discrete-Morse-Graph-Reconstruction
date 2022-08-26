@@ -1,7 +1,6 @@
 # 3D Discrete Morse Graph Reconstruction Python Package
 
-DiMo3d is a python package meant for executing the discrete Morse graph reconstruction algorithm on 3D imaging data. - designed with full mouse brain imaging data in mind.  The package includes functions which allow users to divide the domain into overlapping subregions, compute persistence diagrams of each subregion, generate a discrete Morse graph reconstruction for each subregion, and merge the graphs together into a final graph reconstruction of the full domain.
-
+* [Introduction](#introduction)
 * [Installation Intructions](#installation-instructions)
   * [System Requirements](#system-requirements)
   * [Required Python Libraries](#required-python-libraries)
@@ -12,16 +11,36 @@ DiMo3d is a python package meant for executing the discrete Morse graph reconstr
 * [MATLAB Scripts](#matlab-scripts)
 * [Example Use of Pipeline](#example-use-of-pipeline)  
 
+## Introduction
+
+DiMo3d is a python package (with underlying matlab functions and c++ libraries) that can be used to compute DM graph reconstructions for 3D imaging data.  There are functions for dividing an image stack into subregions, computing persistence diagram for each subregion (required for computing DM graph reconstruction, but could also be of independent interest), computing DM graph reconstruction for each subregion, merging graphs of subregions into a single graph for the full image_stack, and writing graphs to .vtp format to be visualize by applications such as paraview (https://www.paraview.org/).
+
+DM graph reconstruction is a methodology used to extract true underlying graph structure behind noisy input data.  The input for the algorithm is a density function defined on a triangulation, and the output graph is the mountain ridges of the input density function.  For mouse brain imaging data, the density function used is simply the voxel values. The mountain ridges of the density function do an excellent job of captures the neuronal branches in the image stack.  However, the persistence computation is a computational bottleneck, and cannot be performed on large datasets.  By dividing input images into overlapping subregions, the pipeline is able to efficiently extract accurate graphs for each subregion, and merge these graphs into a single reconstruction for the full domain.
+
+This package was designed to be an intergral part of the pipeline to extract single neuron reconstructions from full mouse brain imaging data.  While the pipeline will output a graph capture all neuronal branches, further postprocess of the graph will be required to obtain individual neuron reconstructions.  The package, while designed with mouse imaging data specifically in mind, can be used on any 3D imaging dataset.  Optimal parameters will vary by dataset and intended use case of the graphs.
+
 ## Installation Instructions
+
+Copy DiMo3d to your current working directory, then ensure all system requirements and python libraries are installed.  Then compile c++ programs that the library calls, and copy matlab functions to the current working directory.  See below for specific instructions.
+
 ### System Requirements
 - Python 3.8.8 (or newer)
 - g++ 9.4.0 (or newer)
 - cmake 3.16.3 (or newer)
 
 ### Required Python Libraries
-- cv2 - pip install opencv-python (https://pypi.org/project/opencv-python/)
-- PIL - pip install pillow (https://pypi.org/project/Pillow/)
-- vtk - pip install vtk (https://pypi.org/project/vtk/)
+
+- cv2 (https://pypi.org/project/opencv-python/)
+
+    >pip install opencv-python
+
+- PIL (https://pypi.org/project/Pillow/)
+
+    >pip install pillow
+
+- vtk (https://pypi.org/project/vtk/)
+
+    >pip install vtk
 
 ### Compiling Code
 
@@ -57,7 +76,7 @@ Complex Persistence + Discrete Morse Graph Reconstruction Module
 ### DiMo3d.split_domain(input_dir, output_dir, x_len, y_len, z_len, overlap=5)
 
 #### Description
-Divide the input domain into overlapping sub-rectangular prisms.
+Given an input image stack, divide the image stack into overlapping subregions.  The purpose of this is to have subregions of a size such that the DM graph reconstruction algorithm is efficient to run on each individual region.  It is recommended to take as large of subregions as possible such that the running time for DM graph reconstruction is still acceptable to the user.  Overlap of subregions allows for the merging of the graphs of subregions into a single graph for the full domain. It is recommended to take as small of an overlap as possible such that all individual neuron branches that cross subregions are correctly captured after merging graphs.
 
 #### Input
 - Input_dir - path to input image stack
@@ -82,10 +101,10 @@ Returns nx, ny, nz, and overlap - the x/y/z dimensions of the image stack and th
 
 ![DiMo3d.split_domain](images/split-domain.png)
 
-### DiMo3d.split_domain(input_dir, output_dir, x_len, y_len, z_len, overlap=5i)
+### DiMo3d.write_dipha_persistence_input(input_path)
 
 #### Description
-Write input file for dipha program used to compute persistence for each subregion
+The first step of compute DM graph reconstruction to compute the persistence diagrams of each subregion.  This packages uses a modified version of the DIPHA software for this computation.  DIPHA takes specifically formatted input file - this function creates the required input file for each subregion in the domain.
 
 #### Input
 - input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should match output_dir of a previous DiMo3d.split_domain call.
@@ -109,7 +128,8 @@ Input file for DIPHA program.  A file is written for each subregion.
 ### DiMo3d.compute_dipha_persistence(input_path, threads=1)
 
 #### Description
-Compute persistence using DIPHA program for each subregion
+
+The first step of compute DM graph reconstruction to compute the persistence diagrams of each subregion.  This packages uses a modified version of the DIPHA software for this computation.  DIPHA takes specifically formatted input file.  After generating the input files for the dipha program for each subregion (DiMo3d.write_dipha_persistence_input) this function will call the DIPHA program to compute the persistence diagram for each subregion.
 
 #### Input
 - input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.write_dipha_persistence_input call
@@ -131,10 +151,10 @@ Persistence Diagram for each subregion.  A file is written for each subregion.
 
 ![DiMo3d.compute_dipha_persistence](images/compute-dipha-persistence.png)
 
-### DiMo3d.compute_dipha_persistence(input_path, threads=1)
+### DiMo3d.convert_persistence_diagram(input_path, threads=1)
 
 #### Description
-Convert the format of the persistence diagram outputted by dipha for each subregion to be used for graph reconstruction
+The DM graph reconstruction program takes a specifically formatted file of persistence values of edges in domain as input.  The DIPHA program outputs this information but in an incompatiable format.  This function will convert the DIPHA output containing the persistence information needed to perform DM graph reconstruction for each subregion.
 
 #### Input
 - input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.compute_dipha_persistence call
@@ -160,7 +180,7 @@ Persistence Diagram for each subregion in format meant for discrete Morse graph 
 ### DiMo3d.write_vertex_file(input_path, threads=1)
 
 #### Description
-Write vertex files for each subregion to be used for graph reconstruction
+The DM graph reconstruction program takes a file as input that contains the coordinates and density (voxel) function values.  This function will convert the image stack of each subregion into the .txt format required by the DM graph reconstruction algorithm.
 
 #### Input
 - input_path - input path to the directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
@@ -184,7 +204,7 @@ Text file containing vertex coordinates for each subregion in format meant for d
 ### DiMo3d.graph_reconstruction(input_path, persistence_threshold, threads=1)
 
 #### Description
-Run discrete Morse graph reconstruction on each subregion within input_path directory.
+Run discrete Morse graph reconstruction on each subregion within input_path directory.  The persistence threshold is the only parameter required - a higher threshold will results in a greater simplification of the output graph (fewer edges).  Outputs are stored in a folder named after the persistence threshold - so a user can see results at a specific threshold then rerun with an appropriately adjusted threshold.
 
 #### Input
 - input_path - input path to directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
@@ -214,7 +234,8 @@ Vertex and edge file representing the discrete Morse graph reconstruction output
 ### DiMo3d.merge(input_path, merge_dir, persistence_threshold, merge_threshold, nx, ny, nz, x_len, y_len, z_len, overlap, threads=1)
 
 #### Description
-Perform DM-based hierarchical merging of graphs of subregions. Performed iteratively until a single graph for the entire domain remains.
+
+Perform DM-based hierarchical merging of graphs of subregions. After getting graph reconstructions for each subregion, a user can merge the graphs together in order to obtain a single graph for the entire domain. Merging is required because branches that cut across different subregions might not already be connected by taking the union of the two graphs.  First a triangulation is built in the overlap regions, which connects branches meant to be merged. Density estimation is used assign density values to each vertex in the triangulation. Then DM graph reconstruction is performed to extract the true connection path between overlap regions.  These triangulations are significantly smaller than that of the full domain, making the merging significantly more efficient than running DM graph reconstruction on full domain.
 
 #### Input
 - input_path - input path to directory containing subregions for which we will need to compute persistence on.  This argument should be the same as input_path of a previous DiMo3d.convert_persistence_diagram call
@@ -253,7 +274,7 @@ Vertex and edge files representing the discrete Morse graph reconstruction outpu
 ### DiMo3d.write_vtp_graph(vert_filename, edge_filename, output_filename)
 
 #### Description
-Convert .txt format graph (vert file and edge file) to .vtp format
+Convert .txt format graph (vert file and edge file) to .vtp format.  Through the package, DM graphs are outputted as two .txt files - a text file for vertices and a text file for edges.  Different formatting is required to visualize graphs in 3rd party software.  This function will output a .vtp file for the specified input graph.  .vtp can be viewed in softwares such as Paraview.
 
 #### Input
 - vert_filename - vertex coordinates of graph
@@ -278,14 +299,14 @@ A single file (output_filename) written in .vtp format containing the input grap
 ### DiMo3c.extract_subregion(input_dir, output_dir, x_center, y_center, z_center, x_len, y_len, z_len, threads=1):
 
 #### Description
-Extract a subregion from full brain fMOST image stack
+Extract a subregion from full brain fMOST image stack.  This function is meant for extracting a subregion off of an fMOST image stack. fMOST brain imaging data is huge and can take a very long time to process.  Taking a smaller - but still sizable subregion is a great way to see DM graphs for meaningful portions of the brain.
 
 #### Input
 - input_dir - input image stack of large (presumably full) domain
 - output_dir - directory subregion image stack will be stored
-- x_center - subregion center's x coordinate (in microns!)
-- y_center - subregion center's y coordinate (in microns!)
-- z_center - subregion center's z coordinate (in microns!)
+- x_center - subregion center's x coordinate (in microns! - take from ground truth .swc file)
+- y_center - subregion center's y coordinate (in microns! - take from ground truth .swc file)
+- z_center - subregion center's z coordinate (in microns! - take from ground truth .swc file)
 - x_len - length of x-axis of subregion (in pixels!)
 - y_len - length of y-axis of subregion (in pixels!)
 - z_len - length of z-axis of subregion (in pixels!)
@@ -309,7 +330,7 @@ Image stack of a subregion of an fMOST brain
 
 #### Description
 
-Compute persistence diagram of 3D image stack.  The program is a modified version of the code found at (https://github.com/DIPHA/dipha).
+The first step of the DM graph reconstruction algorithm is to compute persistence on the so called lower star filtration of the input triangulation with respect to the density function.  This package uses the state of the art DIPHA persistence program for this step. The program is a modified version of the code found at (https://github.com/DIPHA/dipha) that is meant to explicitly take 3D data and output all of the persistence information needed for the DM graph reconstruction algorithm.
 
 #### Python Function
 
@@ -330,7 +351,7 @@ Binary file (edge_filename) containing persistence information for all edges
 
 #### Description
 
-Executes discrete Morse graph reconstruction algorithm
+After computing persistence of the edges in the domain, the DM algorithm uses the persistence information to build an appropriate spanning forest and extracts the stable 1-manifolds (mountain ridges) on top of the spanning forest.  The program takes a list of vertices in the domain and a file containing the persistence information computed by DIPHA.
 
 #### Python Function
 
@@ -353,7 +374,7 @@ Graph (dimo_vert.txt and dimo_edge.txt) written to output_dir
 
 #### Description
 
-Builds a single complex out of multiple subregion's graphs to output that will be simplified with the DM graph reconstruction algorithm
+Builds a single complex out of multiple subregion's graphs to output that will be simplified with the DM graph reconstruction algorithm.  After computing graph reconstruction of each subregion - the first step of the merging process is to build a complex containing a triangulation of overlap regions that contain graphs in order to connect falsely broken branches running between subregions.  This program build a complex for a single merge.
 
 #### Python Function
 
@@ -376,7 +397,7 @@ A single complex built from up to 8 individual subregions DM graph reconstructio
 
 #### Description
 
-Run DM Graph reconstruction on a simplicial complex with density function defined on its vertices.  The program is a modified version of the code found at (https://github.com/wangjiayuan007/graph_recon_DM).
+Run DM Graph reconstruction on a simplicial complex with density function defined on its vertices.  After building a triangulation of the overlap region, another round of DM on the overlap regions is required to extract the true connection between subregions - without this connections will be entire triangulations which is not a true representation of the underlying neuronal branches. The program is a modified version of the code found at (https://github.com/wangjiayuan007/graph_recon_DM) meant to include what are known as unpaired edges and their stable 1-manifolds.  Unpaired edges capture loops that are in the input complex and cannot be removed with persistence thresholding.
 
 #### Python Function
 
@@ -401,7 +422,7 @@ Graph in .txt format (overlap_dimo_vert.txt and overlap_dimo_edge.txt)
 
 #### Description
 
-Creates DIPHA input file for all subregions
+Creates DIPHA input file for all subregions.  The DIPHA program takes a specifically formatted input file.  The authors of DIPHA included a script for generating such file for imaging data.  This matlab function is a modified version meant to build write the input file needed for every subregion.
 
 #### Python Function
 		
@@ -422,7 +443,7 @@ DIPHA input file for each subregion.  A subregion’s file is written to its res
 
 #### Description
 
-Converts DIPHA persistence diagram to .txt format for use by Discrete Morse Graph Reconstruction program
+Converts DIPHA persistence diagram to .txt format for use by Discrete Morse Graph Reconstruction program.  The DIPHA program includes a matlab function to read in binary output file of program to visualize persistence diagram.  This matlab function is a modified version meant to convert the dipha output of a subregion into a usable format for the DM-graph reconstruction program.
 
 #### Python Function
 		
