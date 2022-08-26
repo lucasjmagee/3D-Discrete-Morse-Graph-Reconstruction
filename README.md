@@ -269,6 +269,8 @@ Vertex and edge files representing the discrete Morse graph reconstruction outpu
     >dm.graph_reconstruction(morse_dir, 32)
     >dm.merge(morse_dir, merge_dir, 32, 32, 256, 256, 256, 64, 64, 64, 5, 1)
 
+![DiMo3d.merge-example](images/merge-example.png)
+
 ![DiMo3d.merge](images/python-merge.png)
 
 ### DiMo3d.write_vtp_graph(vert_filename, edge_filename, output_filename)
