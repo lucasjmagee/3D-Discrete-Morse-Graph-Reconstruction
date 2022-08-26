@@ -20,6 +20,9 @@ DM graph reconstruction is a methodology used to extract true underlying graph s
 This package was designed to be an intergral part of the pipeline to extract single neuron reconstructions from full mouse brain imaging data.  While the pipeline will output a graph capture all neuronal branches, further postprocess of the graph will be required to obtain individual neuron reconstructions.  The package, while designed with mouse imaging data specifically in mind, can be used on any 3D imaging dataset.  Optimal parameters will vary by dataset and intended use case of the graphs.
 
 ## Installation Instructions
+
+Copy DiMo3d to your current working directory, then ensure all system requirements and python libraries are installed.  Then compile c++ programs that the library calls, and copy matlab functions to the current working directory.  See below for specific instructions.
+
 ### System Requirements
 - Python 3.8.8 (or newer)
 - g++ 9.4.0 (or newer)
