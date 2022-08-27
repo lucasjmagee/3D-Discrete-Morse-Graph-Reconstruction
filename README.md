@@ -299,7 +299,7 @@ A single file (output_filename) written in .vtp format containing the input grap
 
 ![DiMo3d.write_vtp_graph](images/write-vtp-graph.png)
 
-### DiMo3c.extract_subregion(input_dir, output_dir, x_center, y_center, z_center, x_len, y_len, z_len, threads=1):
+### DiMo3d.extract_subregion(input_dir, output_dir, x_center, y_center, z_center, x_len, y_len, z_len, threads=1):
 
 #### Description
 Extract a subregion from full brain fMOST image stack.  This function is meant for extracting a subregion off of an fMOST image stack. fMOST brain imaging data is huge and can take a very long time to process.  Taking a smaller - but still sizable subregion is a great way to see DM graphs for meaningful portions of the brain.
