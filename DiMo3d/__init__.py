@@ -408,18 +408,22 @@ def __single_merge(raw_dir, merge_dir, first_dir, persistence_threshold, merge_t
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
-    complex_filename = os.path.join(output_dir, 'merge-complex.sc')
-    # if not os.path.exists(complex_filename):
-    config_filename = os.path.join(merge_dir, 'merge-config-' + str(d) + '.txt')
     if first_dir == raw_dir:
         thresh = persistence_threshold
     else:
-        thresh = merge_dir
+        thresh = merge_threshold
+
+    morse_dir = os.path.join(output_dir, str(merge_threshold) + '/')
+    config_filename = os.path.join(merge_dir, 'merge-config-' + str(d) + '.txt')
+
+    complex_filename = os.path.join(output_dir, 'merge-complex.sc')
+    # if not os.path.exists(complex_filename):
+    
+    
     merge_command = './DiMo3d/code/merge/a.out ' + raw_dir + ' ' + merge_dir + ' ' + config_filename + ' ' + str(thresh)
     print(merge_command)
     os.system(merge_command)
 
-    morse_dir = os.path.join(output_dir, str(persistence_threshold) + '/')
     if not os.path.exists(morse_dir):
         os.mkdir(morse_dir)
     morse_command = './DiMo3d/code/spt_cpp/spt_cpp' + ' ' + complex_filename + ' ' + morse_dir + ' ' + str(merge_threshold) + ' 3'
@@ -460,13 +464,17 @@ def __single_merge(raw_dir, merge_dir, first_dir, persistence_threshold, merge_t
     with open(merged_edge_filename, 'r') as edge_file:
         reader = csv.reader(edge_file, delimiter=' ')
         for row in reader:
+            dist = distance.euclidean(final_verts[int(row[0])][0:3], final_verts[int(row[1])][0:3])
+            if dist > 2:
+                # print(dist, final_verts[int(row[0])][0:3], final_verts[int(row[1])][0:3])
+                continue
             final_edges.append([int(row[0]), int(row[1])])
         edge_file.close()
 
     # total = 0
     # match = 0
+
     for d in merged_morse_dirs:
-        local_count = 0
         vert_filename = os.path.join(d, 'dimo_vert.txt')
         edge_filename = os.path.join(d, 'interior_edge.txt')
 
@@ -598,9 +606,6 @@ def write_vtp_graph(vert_filename, edge_filename, output_filename):
     for i in range(ne):
         v1_ind = int(edge[i, 0])
         v2_ind = int(edge[i, 1])
-
-        if distance.euclidean(vert[v1_ind][0:3], vert[v2_ind][0:3]) > 2:
-            continue
 
         new_line = vtk.vtkLine()
         new_line.GetPointIds().SetId(0, v1_ind)
